@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rishi Patel</title>
+<style>
+  :root{
+    --black:      #0A0A0B;
+    --charcoal:   #161618;
+    --surface:    #1D1D20;
+    --surface-2:  rgba(255,255,255,0.045);
+    --line:       rgba(255,255,255,0.09);
+    --line-soft:  rgba(255,255,255,0.05);
+    --grey-500:   #48484C;
+    --grey-400:   #6E6E73;
+    --grey-300:   #9A9AA0;
+    --grey-100:   #C7C7CC;
+    --white:      #F5F5F7;
+    --radius-lg:  28px;
+    --radius-md:  18px;
+    --radius-sm:  999px;
+    --nav-h:      76px;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--black);
+    color:var(--white);
+    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing:-0.03em;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    scroll-snap-type:y proximity;
+    height:100vh;
+    overflow-y:auto;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+  }
+
+  ::selection{ background:var(--grey-100); color:var(--black); }
+
+  .wrap{ max-width:1120px; width:100%; margin:0 auto; position:relative; z-index:1; }
+  .narrow{ max-width:700px; }
+  h1, h2, h3, h4{ font-weight:700; letter-spacing:-0.03em; line-height:1.05; }
+  p{ line-height:1.65; color:var(--grey-100); font-weight:400; }
+
+  /* ---------- Top Navbar ---------- */
+  .site-nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    height:var(--nav-h);
+    background:rgba(10,10,11,0.65);
+    backdrop-filter:blur(20px) saturate(140%);
+    -webkit-backdrop-filter:blur(20px) saturate(140%);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    height:100%;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .nav-logo{
+    font-size:15px; font-weight:700; letter-spacing:-0.02em;
+    color:var(--white); text-decoration:none;
+  }
+  .nav-links{ display:flex; align-items:center; gap:36px; }
+  .nav-links a{
+    font-size:13px; font-weight:600; letter-spacing:-0.01em;
+    color:var(--grey-300); text-decoration:none;
+    position:relative; padding:6px 0;
+    transition:color 0.25s ease;
+  }
+  .nav-links a::after{
+    content:""; position:absolute; left:0; bottom:0;
+    width:0; height:1px; background:var(--white);
+    transition:width 0.25s ease;
+  }
+  .nav-links a:hover{ color:var(--white); }
+  .nav-links a.active{ color:var(--white); }
+  .nav-links a.active::after{ width:100%; }
+
+  .nav-toggle{
+    display:none; flex-direction:column; gap:5px;
+    background:none; border:none; cursor:pointer; padding:8px;
+  }
+  .nav-toggle span{ width:20px; height:1.5px; background:var(--white); display:block; }
+
+  @media (max-width:860px){
+    .nav-links{
+      position:absolute; top:var(--nav-h); left:0; right:0;
+      background:var(--charcoal);
+      border-bottom:1px solid var(--line);
+      flex-direction:column; align-items:flex-start; gap:0;
+      max-height:0; overflow:hidden;
+      transition:max-height 0.35s ease;
+    }
+    .nav-links.open{ max-height:400px; }
+    .nav-links a{ width:100%; padding:16px 8vw; border-bottom:1px solid var(--line-soft); }
+    .nav-links a::after{ display:none; }
+    .nav-toggle{ display:flex; }
+  }
+
+  /* ---------- Sections ---------- */
+  section{
+    position:relative;
+    min-height:100vh;
+    width:100%;
+    scroll-snap-align:start;
+    scroll-margin-top:var(--nav-h);
+    padding:calc(var(--nav-h) + 64px) 8vw 90px;
+    display:flex; flex-direction:column; justify-content:center;
+    border-bottom:1px solid var(--line-soft);
+    overflow:hidden;
+  }
+  section::before{
+    content:""; position:absolute; inset:0;
+    background:radial-gradient(ellipse 60% 50% at 50% 0%, rgba(255,255,255,0.05), transparent 70%);
+    pointer-events:none;
+  }
+
+  .eyebrow{
+    display:flex; align-items:center; gap:14px;
+    font-size:12px; font-weight:600; letter-spacing:-0.01em;
+    text-transform:uppercase; color:var(--grey-300);
+    margin-bottom:26px;
+  }
+  .eyebrow .dash{ width:24px; height:1px; background:var(--grey-400); display:inline-block; }
+
+  .sec-title{ font-size:clamp(2rem, 4.2vw, 3.2rem); margin-bottom:28px; max-width:820px; }
+
+  /* ---------- Reveal ---------- */
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+  .reveal.d1{ transition-delay:0.08s; }
+  .reveal.d2{ transition-delay:0.16s; }
+  .reveal.d3{ transition-delay:0.24s; }
+
+  /* ---------- Info ---------- */
+  .name-xl{ font-size:clamp(3rem, 8.5vw, 6.5rem); letter-spacing:-0.04em; }
+  .subtitle{ margin-top:14px; font-size:clamp(1rem,1.6vw,1.2rem); color:var(--grey-300); }
+
+  .quick-facts{
+    display:flex; flex-wrap:wrap; gap:12px;
+    margin-top:28px;
+  }
+  .fact{
+    border:1px solid var(--line); border-radius:var(--radius-sm);
+    padding:9px 16px; font-size:12px; color:var(--grey-100);
+    background:rgba(255,255,255,0.02);
+  }
+  .fact b{ color:var(--grey-400); font-weight:600; margin-right:6px; text-transform:uppercase; font-size:11px; }
+
+  #info .intro{ margin-top:32px; max-width:680px; font-size:clamp(1rem,1.6vw,1.15rem); }
+
+  .self-grid{
+    display:grid; grid-template-columns:220px 1fr; gap:36px;
+    margin-top:48px; align-items:start;
+  }
+  .photo-placeholder{
+    width:100%; aspect-ratio:3/4;
+    border:1px dashed var(--line); border-radius:var(--radius-md);
+    display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px;
+    color:var(--grey-500); background:rgba(255,255,255,0.015);
+    font-size:12px; font-weight:600; text-transform:uppercase;
+  }
+  .photo-placeholder .plus{ font-size:22px; font-weight:300; color:var(--grey-400); }
+  .photo-placeholder.small{ aspect-ratio:1/1; }
+  .photo-image{
+    width:100%; aspect-ratio:3/4;
+    border:1px solid var(--line); border-radius:var(--radius-md);
+    object-fit:cover; display:block;
+  }
+  .photo-image.small{ aspect-ratio:1/1; }
+  .hobby-photos{ display:grid; grid-template-columns:repeat(3, 90px); gap:12px; margin-top:16px; }
+
+  .self-details h3{ font-size:1rem; text-transform:uppercase; letter-spacing:-0.01em; color:var(--grey-300); margin-bottom:14px; }
+  .self-block{ margin-bottom:34px; }
+  .self-block:last-child{ margin-bottom:0; }
+  .self-block p em{ color:var(--grey-300); font-style:normal; }
+
+  @media (max-width:760px){
+    .self-grid{ grid-template-columns:1fr; }
+    .photo-placeholder{ max-width:220px; }
+  }
+
+  /* ---------- Tags ---------- */
+  .tag-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; }
+  .tag{
+    font-size:12px; font-weight:600; padding:9px 16px;
+    border:1px solid var(--line); border-radius:var(--radius-sm);
+    color:var(--grey-100); background:rgba(255,255,255,0.02);
+  }
+
+  /* ---------- Career Goals / Dream Job / 10yr ---------- */
+  .goal-copy{ font-size:clamp(1.05rem, 1.9vw, 1.35rem); max-width:760px; }
+  .skills-block{ margin-top:44px; }
+  .skills-block h3{ font-size:12px; text-transform:uppercase; color:var(--grey-300); font-weight:700; margin-bottom:4px; letter-spacing:-0.01em; }
+
+  /* ---------- Timeline ---------- */
+  .timeline{ position:relative; margin-top:16px; }
+  .timeline::before{ content:""; position:absolute; left:9px; top:8px; bottom:8px; width:1px; background:var(--line); }
+  .t-item{ position:relative; padding:0 0 40px 44px; }
+  .t-item:last-child{ padding-bottom:0; }
+  .t-item::before{
+    content:""; position:absolute; left:2px; top:4px;
+    width:16px; height:16px; border-radius:50%;
+    background:var(--charcoal); border:1px solid var(--grey-400);
+  }
+  .t-item.on::before{ background:var(--white); border-color:var(--white); }
+  .t-label{ font-size:12px; font-weight:700; text-transform:uppercase; color:var(--grey-400); letter-spacing:-0.01em; margin-bottom:6px; }
+  .t-title{ font-size:clamp(1.1rem, 2vw, 1.4rem); font-weight:700; margin-bottom:8px; }
+  .t-item p{ max-width:620px; font-size:0.98rem; }
+
+  /* ---------- Quote card ---------- */
+  .quote-card{
+    max-width:740px; margin:48px 0 0; padding:44px 40px;
+    background:var(--surface-2);
+    backdrop-filter:blur(20px) saturate(140%);
+    -webkit-backdrop-filter:blur(20px) saturate(140%);
+    border:1px solid var(--line); border-radius:var(--radius-lg);
+  }
+  .quote-mark{ font-size:3.2rem; line-height:1; color:var(--grey-500); margin-bottom:6px; font-weight:700; }
+  blockquote{ font-size:clamp(1.15rem, 2.2vw, 1.6rem); font-weight:600; letter-spacing:-0.02em; line-height:1.35; color:var(--white); }
+  cite{ display:block; margin-top:20px; font-style:normal; font-size:13px; font-weight:600; color:var(--grey-400); text-transform:uppercase; }
+
+  /* ---------- Footer ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:72px 8vw 32px;
+    background:var(--charcoal);
+  }
+  .footer-grid{
+    display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:48px;
+    padding-bottom:48px;
+  }
+  .footer-name{ font-size:1.4rem; font-weight:700; letter-spacing:-0.03em; margin-bottom:14px; }
+  .footer-tag{ max-width:340px; font-size:0.92rem; }
+  footer h4{ font-size:11px; text-transform:uppercase; letter-spacing:-0.01em; color:var(--grey-400); font-weight:700; margin-bottom:18px; }
+  .footer-col{ display:flex; flex-direction:column; gap:12px; }
+  .footer-col a{ font-size:0.92rem; color:var(--grey-100); text-decoration:none; transition:color 0.25s ease; }
+  .footer-col a:hover{ color:var(--white); }
+  .footer-bottom{
+    border-top:1px solid var(--line-soft);
+    padding-top:24px;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    font-size:12px; color:var(--grey-500);
+  }
+
+  @media (max-width:760px){
+    .footer-grid{ grid-template-columns:1fr; gap:36px; }
+  }
+  @media (max-width:640px){
+    section{ padding:calc(var(--nav-h) + 48px) 6vw 70px; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="site-nav">
+    <div class="wrap nav-inner">
+      <a href="#info" class="nav-logo">Rishi Patel</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      <nav class="nav-links" id="navLinks">
+        <a href="#info" data-target="info" class="active">Info</a>
+        <a href="#career-goals" data-target="career-goals">Career Goals</a>
+        <a href="#dream-job" data-target="dream-job">Dream Job</a>
+        <a href="#ten-year-plan" data-target="ten-year-plan">10 Year Plan</a>
+        <a href="#timeline-path" data-target="timeline-path">Timeline &amp; Path</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 01 — INFO -->
+  <section id="info">
+    <div class="wrap">
+      <div class="eyebrow reveal in"><span class="dash"></span>Info</div>
+      <h1 class="name-xl reveal in">Rishi Patel</h1>
+      <div class="subtitle reveal in d1">Third-year Data Science student &middot; Founder, Reimagine Studio</div>
+
+      <div class="quick-facts reveal d1">
+        <span class="fact"><b>Studying</b>Data Science, MIT Academy of Engineering</span>
+        <span class="fact"><b>Based in</b>India</span>
+        <span class="fact"><b>Currently</b>Founder, Reimagine Studio</span>
+      </div>
+
+      <p class="intro reveal d2">I'm currently building at the intersection of marketing, data, and film. Numbers tell me where a brand is losing revenue.<br> Story is what makes people care enough to fix it, and I've spent my early career trying to hold both at once.</p>
+
+      <div class="self-grid">
+        <img
+          class="photo-image reveal d2"
+          src="family.jpg"
+          alt="Portrait image"
+        >
+
+        <div class="self-details">
+          <div class="self-block reveal d2">
+            <h3>Hobbies</h3>
+            <p>It started with Music and Drawing, piano and percussion as a kid, sketching that turned into my first commissioned illustration work in grade 9.<br>These days it's split between strength training, reading, watches, cars, and shooting &amp; editing content on a Sony ZV-E10, cut in DaVinci Resolve.</p>
+            
+          </div>
+
+          <div class="self-block reveal d3">
+            <h3>My Family</h3>
+            <p>Family's been a big part of getting here, even from the background. I have a really cool mentor and elder brother,<br> <em>Krishi</em> &mdash; <em>he is my business partner and cool brother who is the main reason for what i am today</em>. <br><em>My Mum, she has background in microbiology aka 'Hitler' i can say (internal jokes)  &mdash; don't ask me the reason <br>My Dad, has a consultancy firm majorly working as accountant with good network in hospitlity industry</em> <br> Growing up in a home that backed the leap I'm taking now is a big part of why I'm able to take it.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 — CAREER GOALS -->
+  <section id="career-goals">
+    <div class="wrap">
+      <div class="eyebrow reveal"><span class="dash"></span>Career Goals</div>
+      <h2 class="sec-title reveal d1">Building the track record first.</h2>
+      <p class="goal-copy reveal d2">Right now, the goal is proof before scale &mdash; grow Reimagine Studio into a trusted name in D2C revenue optimization, then bootstrap and prove a consumer brand of my own using that exact same framework. No shortcuts. Everything I'm learning right now, across data, marketing, and storytelling, is groundwork for the next ten years.</p>
+
+      <div class="skills-block reveal d3">
+        <h3>Required Skills</h3>
+        <div class="tag-row">
+          <span class="tag">Data Analysis &amp; Python</span>
+          <span class="tag">Brand &amp; Growth Strategy</span>
+          <span class="tag">Storytelling &amp; Content Production</span>
+          <span class="tag">Financial Literacy &amp; Fundraising</span>
+          <span class="tag">Team Leadership</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 — DREAM JOB -->
+  <section id="dream-job">
+    <div class="wrap">
+      <div class="eyebrow reveal"><span class="dash"></span>Dream Job</div>
+      <h2 class="sec-title reveal d1">Founder and Investor, at the same time.</h2>
+      <p class="goal-copy reveal d2">Running my own VC firm &mdash; funding consumer brands and investing in businesses, while still building and operating one of my own alongside it.</p>
+      <div class="tag-row reveal d3">
+        <span class="tag">Venture Capital</span>
+        <span class="tag">Founder-Operator</span>
+        <span class="tag">Consumer Brands</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 — 10 YEAR PLAN -->
+  <section id="ten-year-plan">
+    <div class="wrap">
+      <div class="eyebrow reveal"><span class="dash"></span>10 Year Plan</div>
+      <h2 class="sec-title reveal d1">Where this is headed.</h2>
+      <p class="goal-copy reveal d2">In ten years, I want Reimagine Studio to be an established name in D2C revenue optimization, my own consumer brand built and proven, and a venture fund of my own &mdash; writing checks into consumer brands and founders I believe in.</p>
+    </div>
+  </section>
+
+  <!-- 05 — TIMELINE AND PATH -->
+  <section id="timeline-path">
+    <div class="wrap">
+      <div class="eyebrow reveal"><span class="dash"></span>Timeline &amp; Path</div>
+      <h2 class="sec-title reveal d1">The route, roughly.</h2>
+
+      <div class="timeline">
+        <div class="t-item on reveal">
+          <div class="t-label">Now</div>
+          <div class="t-title">Degree + Reimagine Studio</div>
+          <p>Finishing my Data Science degree at MIT Academy of Engineering while running Reimagine Studio day to day.</p>
+        </div>
+        <div class="t-item reveal">
+          <div class="t-label">1&ndash;2 Years</div>
+          <div class="t-title">Launch my own consumer brand</div>
+          <p>Bootstrap and prove a consumer brand using the Revenue Flow Architecture framework &mdash; documented in real time.</p>
+        </div>
+        <div class="t-item reveal">
+          <div class="t-label">3&ndash;5 Years</div>
+          <div class="t-title">Scale both, in parallel</div>
+          <p>Grow Reimagine Studio and the consumer brand together, and build a public track record worth investing behind.</p>
+        </div>
+        <div class="t-item reveal">
+          <div class="t-label">5&ndash;10 Years</div>
+          <div class="t-title">Start the fund</div>
+          <p>Launch and operate my own venture fund &mdash; investing in consumer brands while still building one of my own.</p>
+        </div>
+      </div>
+
+      <div class="quote-card reveal d2">
+        <div class="quote-mark">&ldquo;</div>
+        <blockquote>There is nothing guaranteed in life, the only guarantee is I take actions now, bet on myself, and take that leap.</blockquote>
+        <cite>&mdash; Rishi Patel</cite>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap footer-grid">
+      <div>
+        <div class="footer-name">Rishi Patel</div>
+        <p class="footer-tag">Third-year Data Science student and founder of Reimagine Studio, building at the intersection of marketing, data, and film.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <a href="#info">Info</a>
+        <a href="#career-goals">Career Goals</a>
+        <a href="#dream-job">Dream Job</a>
+        <a href="#ten-year-plan">10 Year Plan</a>
+        <a href="#timeline-path">Timeline &amp; Path</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://instagram.com/rishidoestuff" target="_blank" rel="noopener">Instagram &mdash; @rishidoestuff</a>
+      </div>
+    </div>
+    <div class="wrap footer-bottom">
+      <span>&copy; 2026 Rishi Patel. All rights reserved.</span>
+      <span>Built for academic submission.</span>
+    </div>
+  </footer>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{ if(entry.isIntersecting){ entry.target.classList.add('in'); } });
+  }, { threshold:0.15 });
+  revealEls.forEach(el=>revealObserver.observe(el));
+
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  const navObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const id = entry.target.getAttribute('id');
+        navLinks.forEach(l=>{
+          l.classList.toggle('active', l.getAttribute('data-target') === id);
+        });
+      }
+    });
+  }, { threshold:0.5 });
+  sections.forEach(sec=>navObserver.observe(sec));
+
+  const navToggle = document.getElementById('navToggle');
+  const navLinksEl = document.getElementById('navLinks');
+  navToggle.addEventListener('click', ()=> navLinksEl.classList.toggle('open'));
+  navLinksEl.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('click', ()=> navLinksEl.classList.remove('open'));
+  });
+</script>
+
+</body>
+</html>
